@@ -10,6 +10,8 @@ const api = require('./api')
 const config = require('./config.json')
 
 const app = express()
+const mongoDBUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/tester'
+const serverPort = process.env.PORT || 8080
 
 // Create server
 app.server = http.createServer(app)
@@ -28,7 +30,7 @@ app.use(bodyParser.json({
 }))
 
 // Connect to DB
-mongoose.connect('mongodb://localhost:27017/tester', {
+mongoose.connect(mongoDBUrl, {
         useNewUrlParser: true,
         autoIndex: false
     })
@@ -42,6 +44,6 @@ mongoose.connect('mongodb://localhost:27017/tester', {
         console.log('Problem with DB connection', error)
     })
 
-app.server.listen(process.env.PORT || config.port, () => {
+app.server.listen(serverPort, () => {
     console.log(`Started on port ${app.server.address().port}`)
 })
