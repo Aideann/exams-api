@@ -1,17 +1,13 @@
-import { version } from '../../package.json';
-import { Router } from 'express';
-import facets from './facets';
+const express = require('express')
 
-export default ({ config, db }) => {
-	let api = Router();
+const User = require('./User')
 
-	// mount the facets resource
-	api.use('/facets', facets({ config, db }));
+const { Router } = express
 
-	// perhaps expose some API metadata at the root
-	api.get('/', (req, res) => {
-		res.json({ version });
-	});
+module.exports = ({ config, db }) => {
+    const api = Router()
 
-	return api;
+    api.use('/users', User({config, db}))
+
+    return api
 }

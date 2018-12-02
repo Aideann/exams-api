@@ -1,40 +1,47 @@
-import http from 'http';
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
-import initializeDb from './db';
-import middleware from './middleware';
-import api from './api';
-import config from './config.json';
+const http = require('http')
+const express = require('express')
+const cors = require('cors')
+const morgan = require('morgan')
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
-let app = express();
-app.server = http.createServer(app);
+const middleware = require('./middleware')
+const api = require('./api')
+const config = require('./config.json')
 
-// logger
-app.use(morgan('dev'));
+const app = express()
 
-// 3rd party middleware
+// Create server
+app.server = http.createServer(app)
+
+// Logger
+app.use(morgan('dev'))
+
+// Set up CORS
 app.use(cors({
-	exposedHeaders: config.corsHeaders
-}));
+    exposedHeaders: config.corsHeaders
+}))
 
+// Set up body-parser
 app.use(bodyParser.json({
-	limit : config.bodyLimit
-}));
+    limit: config.bodyLimit
+}))
 
-// connect to db
-initializeDb( db => {
+// Connect to DB
+mongoose.connect('mongodb://localhost:27017/tester', {
+        useNewUrlParser: true,
+        autoIndex: false
+    })
+    .then((db) => {
+        console.log('Connected to DB')
 
-	// internal middleware
-	app.use(middleware({ config, db }));
+        app.use(middleware({ config, db }))
+        app.use('/api', api({ config, db }))
+    })
+    .catch((error) => {
+        console.log('Problem with DB connection', error)
+    })
 
-	// api router
-	app.use('/api', api({ config, db }));
-
-	app.server.listen(process.env.PORT || config.port, () => {
-		console.log(`Started on port ${app.server.address().port}`);
-	});
-});
-
-export default app;
+app.server.listen(process.env.PORT || config.port, () => {
+    console.log(`Started on port ${app.server.address().port}`)
+})
