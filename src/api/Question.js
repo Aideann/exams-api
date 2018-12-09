@@ -1,31 +1,22 @@
 const resource = require('resource-router-middleware')
 
-const { User } = require('../models')
+const { Question } = require('../models')
 
 module.exports = ({ config, db }) => resource({
     mergeParams: true,
 
-    id: 'user',
+    id: 'question',
 
     /** GET / - List all entities */
     async list(req, res) {
-        const users = await User
+        const questions = await Question
             .find({}, { _id: false, __v: false })
 
-        res.status(200).json({ users })
+        res.status(200).json({ questions })
     },
 
     /** POST / - Create a new entity */
-    async create({ body }, res) {
-        const { name, lastName, email, type } = body
-
-        try {
-            await User.create({ name, lastName, email, type })
-            res.status(201).json({ ...body })
-        } catch (error) {
-            console.log(error)
-            res.status(503).end(error)
-        }
+    create(req, res) {
 
     },
 

@@ -5,7 +5,7 @@ const { Schema, model } = mongoose
 const setSchema = new Schema({
     name: String,
     date: { type: Date, default: Date.now },
-    questionsIds: [{ type: Schema.Types.ObjectId, ref: 'Question' }]
+    questions: [{ type: Schema.Types.ObjectId, ref: 'Question' }]
 });
 
 setSchema.index({ name: 1, date: 1 });

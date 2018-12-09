@@ -5,7 +5,7 @@ const { Schema, model } = mongoose
 const examSchema = new Schema({
     date: Date,
     creator: String,
-    setsIds: [{ type: Schema.Types.ObjectId, ref: 'Set' }],
+    sets: [{ type: Schema.Types.ObjectId, ref: 'Set' }],
     participants: [{ type: Schema.Types.ObjectId, ref: 'User' }]
 });
 
