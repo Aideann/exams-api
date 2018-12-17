@@ -1,6 +1,6 @@
 const resource = require('resource-router-middleware')
 
-const { Set } = require('../models')
+const { Set, Question } = require('../models')
 
 module.exports = ({ config, db }) => resource({
     mergeParams: true,
@@ -16,8 +16,20 @@ module.exports = ({ config, db }) => resource({
     },
 
     /** POST / - Create a new entity */
-    create(req, res) {
+    async create({ body }, res) {
+        const { name, date } = body
 
+        const questions = await Question.find({ group: 'Matematyka' })
+
+        console.log(questions)
+
+        try {
+            await Set.create({ name, date, questions })
+            res.status(201).json({ ...body })
+        } catch (error) {
+            console.log(error)
+            res.status(503).end(error)
+        }
     },
 
     /** GET /:id - Return a given entity */

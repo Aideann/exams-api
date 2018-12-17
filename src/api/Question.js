@@ -16,7 +16,16 @@ module.exports = ({ config, db }) => resource({
     },
 
     /** POST / - Create a new entity */
-    create(req, res) {
+    async create({ body }, res) {
+        const { answers, correctAnswers, content, type, group } = body
+
+        try {
+            await Question.create({ answers, correctAnswers, content, type, group })
+            res.status(201).json({ ...body })
+        } catch (error) {
+            console.log(error)
+            res.status(503).end(error)
+        }
 
     },
 
